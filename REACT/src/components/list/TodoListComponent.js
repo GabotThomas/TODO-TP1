@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { objectToGETparams } from '../function';
+import { makeClassName, objectToGETparams } from '../function';
 import { POST } from '../function/methods';
 import useFetch from '../hook/useFetch';
 import Loader from '../Loader';
 import SelectInput from '../SelectInput';
+import Toggle from '../Toggle';
 import TodoListLine from './item/TodoListLine';
 
 const TodoListComponent = ({ init = false }) => {
@@ -13,6 +14,7 @@ const TodoListComponent = ({ init = false }) => {
 	const [todoLists, setTodoLists] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [filter, setFilter] = useState({});
+	const [darkMode, setDarkMode] = useState(false);
 
 	useEffect(() => {
 		handleLoad();
@@ -78,84 +80,92 @@ const TodoListComponent = ({ init = false }) => {
 	};
 
 	return (
-		<div className="container todolist">
-			<div className="row justify-content-center">
-				<div className="col-md-12">
-					<div className="card">
-						<div className="card-header">
-							<div>Rechercher par category</div>
-							<div>
-								<SelectInput
-									data={categories}
-									attribute="name"
-									handleCallback={setSelect}
-								/>
-							</div>
-						</div>
-						<div className="card-body">
-							{loading ? (
+		<div className={makeClassName('maining', darkMode && 'dark-mode')}>
+			<div className={'container todolist'}>
+				<div className="row justify-content-center">
+					<div className="col-md-12">
+						<div className="card">
+							<div className="card-header">
+								<div>Rechercher par category</div>
 								<div>
-									<Loader />
+									<SelectInput
+										data={categories}
+										attribute="name"
+										handleCallback={setSelect}
+									/>
 								</div>
-							) : (
-								<table className="table">
-									<thead>
-										<tr>
-											<th scope="col" className="text-center">
-												Todo
-											</th>
-											<th scope="col" className="text-center">
-												Category
-											</th>
-											<th scope="col" className="text-center">
-												Actions
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>
-												<input
-													onChange={setValue}
-													value={newTodo.value}
-													type="text"
-													name="message"
-													className="form-control"
-												/>
-											</td>
-											<td>
-												<SelectInput
-													data={categories}
-													attribute="name"
-													handleCallback={setCategory}
-													default-value={newTodo.category ? newTodo.category.name : ''}
-												/>
-											</td>
-											<td className="text-end">
-												{!loadingSend ? (
+								<div>
+									<Toggle
+										active={darkMode}
+										handleToggle={(e, checked) => setDarkMode(checked)}
+									/>
+								</div>
+							</div>
+							<div className="card-body">
+								{loading ? (
+									<div>
+										<Loader />
+									</div>
+								) : (
+									<table className="table">
+										<thead>
+											<tr>
+												<th scope="col" className="text-center">
+													Todo
+												</th>
+												<th scope="col" className="text-center">
+													Category
+												</th>
+												<th scope="col" className="text-center">
+													Actions
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>
 													<input
-														className="btn btn-primary col-auto"
-														onClick={/*prevent*/ handleSubmit}
-														type="submit"
-														value="Ajouter"
+														onChange={setValue}
+														value={newTodo.value}
+														type="text"
+														name="message"
+														className="form-control"
 													/>
-												) : (
-													<Loader />
-												)}
-											</td>
-										</tr>
-										{todoLists.map((todolist, index) => (
-											<TodoListLine
-												key={todolist.id}
-												todoListGiven={todolist}
-												index={index}
-												handleDeleteCallBack={handleDelete}
-												categories={categories}
-											/>
-										))}
-									</tbody>
-								</table>
-							)}
+												</td>
+												<td>
+													<SelectInput
+														data={categories}
+														attribute="name"
+														handleCallback={setCategory}
+														default-value={newTodo.category ? newTodo.category.name : ''}
+													/>
+												</td>
+												<td className="text-end">
+													{!loadingSend ? (
+														<input
+															className="btn btn-primary col-auto"
+															onClick={/*prevent*/ handleSubmit}
+															type="submit"
+															value="Ajouter"
+														/>
+													) : (
+														<Loader />
+													)}
+												</td>
+											</tr>
+											{todoLists.map((todolist, index) => (
+												<TodoListLine
+													key={todolist.id}
+													todoListGiven={todolist}
+													index={index}
+													handleDeleteCallBack={handleDelete}
+													categories={categories}
+												/>
+											))}
+										</tbody>
+									</table>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
