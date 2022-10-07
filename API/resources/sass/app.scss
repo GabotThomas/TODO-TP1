@@ -1,0 +1,82 @@
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Nunito");
+@import "material";
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+.spinner-border {
+    span {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner-border {
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+    }
+}
+
+.todo_list_line {
+    &.completed {
+        background-color: $green;
+        color: #fff;
+    }
+}
+
+.select-input {
+    position: relative;
+    .select-list {
+        position: absolute;
+        width: 100%;
+        z-index: 4;
+        li{
+            cursor: pointer;
+            &:hover,&:focus{
+                background-color: rgb(215, 215, 215);
+            }
+            &.selected{
+                background-color: #0d6efd;
+                color: #fff;
+            }
+        }
+    }
+}
+
+.btn {
+    &.icon-btn {
+        line-height: 1;
+        .spinner-border {
+            color: #fff !important;
+            width: 30px;
+            height: 30px;
+        }
+    }
+    .material-icons {
+        font-size: 30px;
+    }
+}
+.btn-warning {
+    .material-icons {
+        color: #fff;
+    }
+}
+
+.todolist .form-checking {
+    position: relative;
+    width: fit-content;
+    display: inline-block;
+    margin-right: 50px;
+    &::before {
+        content: "completed";
+        position: absolute;
+        /* top: -70%; */
+        top: 0;
+        left: 50%;
+        font-size: 12px;
+        transform: translate(-50%, -100%);
+    }
+}
