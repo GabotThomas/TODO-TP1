@@ -83,7 +83,7 @@ const TodoListComponent = ({ init = false }) => {
 				<div className="col-md-12">
 					<div className="card">
 						<div className="card-header">
-							<div>Todo List</div>
+							<div>Rechercher par category</div>
 							<div>
 								<SelectInput
 									data={categories}
@@ -132,12 +132,16 @@ const TodoListComponent = ({ init = false }) => {
 												/>
 											</td>
 											<td className="text-end">
-												<input
-													className="btn btn-primary col-auto"
-													onClick={/*prevent*/ handleSubmit}
-													type="submit"
-													value="Ajouter"
-												/>
+												{!loadingSend ? (
+													<input
+														className="btn btn-primary col-auto"
+														onClick={/*prevent*/ handleSubmit}
+														type="submit"
+														value="Ajouter"
+													/>
+												) : (
+													<Loader />
+												)}
 											</td>
 										</tr>
 										{todoLists.map((todolist, index) => (

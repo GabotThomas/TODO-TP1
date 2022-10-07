@@ -19,12 +19,8 @@ const TodoListLine = ({
 
 	useEffect(() => {
 		if (resultDelete && resultDelete.success) {
-			//handleDeleteCallBack(index);
+			handleDeleteCallBack(index);
 		}
-	}, [resultDelete]);
-
-	useCallback(() => {
-		handleDeleteCallBack(index);
 	}, [resultDelete]);
 
 	useEffect(() => {
