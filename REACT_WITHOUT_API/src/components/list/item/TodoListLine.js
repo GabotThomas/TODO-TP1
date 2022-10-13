@@ -1,46 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeClassName } from '../../function';
-import { DELETE, PUT } from '../../function/methods';
-import useFetch from '../../hook/useFetch';
-import Loader from '../../Loader';
-import LoadingButton from '../../LoadingButton';
 import SelectInput from '../../SelectInput';
 
 const TodoListLine = ({
 	todoListGiven = {},
 	index,
 	handleDeleteCallBack,
+	handleModifyCallback,
 	categories,
 }) => {
 	const [todoList, setTodoList] = useState(todoListGiven);
 	const [newValue, setNewValue] = useState(todoListGiven);
-	const [resultDelete, loadDelete, loadingDelete] = useFetch();
-	const [resultEdit, loadEdit, loadingEdit] = useFetch();
-
-	useEffect(() => {
-		if (resultDelete && resultDelete.success) {
-			handleDeleteCallBack(index);
-		}
-	}, [resultDelete]);
-
-	useEffect(() => {
-		if (resultEdit && resultEdit.success) {
-			setTodoList({
-				...resultEdit.todoList,
-				modify: false,
-			});
-			setNewValue(resultEdit.todoList);
-		}
-	}, [resultEdit]);
 
 	const handleDelete = () => {
-		loadDelete({
-			url: 'todolist',
-			method: DELETE,
-			body: {
-				id: todoList.id,
-			},
-		});
+		handleDeleteCallBack(index);
 	};
 
 	const handleModify = (modify = true) => {
@@ -63,11 +36,13 @@ const TodoListLine = ({
 	};
 
 	const handleEdit = (justCompleted = false) => {
-		loadEdit({
-			url: `todolist/${todoList.id}`,
-			method: PUT,
-			body: justCompleted ? { completed: true } : newValue,
+		const temp = justCompleted ? { ...todoListGiven, completed: true } : newValue;
+		setTodoList({
+			...temp,
+			modify: false,
 		});
+		setNewValue(temp);
+		handleModifyCallback(temp, index);
 	};
 
 	if (todoList.modify) {
@@ -80,7 +55,6 @@ const TodoListLine = ({
 						type="text"
 						name="message"
 						className="form-control"
-						disabled={loadingEdit}
 					/>
 				</td>
 				<td>
@@ -106,9 +80,7 @@ const TodoListLine = ({
 							type="submit"
 							className="btn btn-success m-1"
 							value="Modifier"
-							disabled={loadingEdit}
 						>
-							<LoadingButton loading={loadingEdit} />
 							Modifier
 						</button>
 						<button
@@ -136,7 +108,7 @@ const TodoListLine = ({
 							onClick={e => handleEdit(true)}
 							className="btn btn-success col-auto m-1 icon-btn"
 						>
-							{loadingEdit ? <Loader /> : <span className="material-icons">done</span>}
+							<span className="material-icons">done</span>
 						</button>
 					)}
 
@@ -146,12 +118,8 @@ const TodoListLine = ({
 					>
 						<span className="material-icons">mode_edit</span>
 					</button>
-					<button
-						onClick={handleDelete}
-						className="btn btn-danger col-auto m-1 icon-btn"
-						disabled={loadingDelete}
-					>
-						{loadingDelete ? <Loader /> : <span className="material-icons">delete</span>}
+					<button onClick={handleDelete} className="btn btn-danger col-auto m-1 icon-btn">
+						<span className="material-icons">delete</span>
 					</button>
 				</div>
 			</td>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeClassName } from './function';
+import uniqid from 'uniqid';
 
 const SelectInput = ({ data, attribute, handleCallback, defaultValue = '' }) => {
 	const [value, setValue] = useState(defaultValue);
@@ -64,7 +65,7 @@ const SelectInput = ({ data, attribute, handleCallback, defaultValue = '' }) => 
 					<ul className="list-group">
 						{data.map((property, index) => (
 							<li
-								key={property.id}
+								key={uniqid()}
 								value={property.id}
 								onMouseDown={e => handleClick(index)}
 								className={makeClassName(

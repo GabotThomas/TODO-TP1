@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { makeClassName, objectToGETparams } from '../function';
 import { POST } from '../function/methods';
 import useFetch from '../hook/useFetch';
+import useLocalStorage from '../hook/useLocalStorage';
 import Loader from '../Loader';
 import SelectInput from '../SelectInput';
 import Toggle from '../Toggle';
@@ -11,10 +12,11 @@ const TodoListComponent = ({ init = false }) => {
 	const [result, load, loading] = useFetch();
 	const [resultSend, loadSend, loadingSend] = useFetch();
 	const [newTodo, setNewTodo] = useState({ value: '', category: null });
+	const { getStoredItem, setItemToStorage } = useLocalStorage();
 	const [todoLists, setTodoLists] = useState([]);
 	const [categories, setCategories] = useState([]);
 	const [filter, setFilter] = useState({});
-	const [darkMode, setDarkMode] = useState(false);
+	const [darkMode, setDarkMode] = useState(getStoredItem('darkMode') || false);
 
 	useEffect(() => {
 		handleLoad();
@@ -43,8 +45,16 @@ const TodoListComponent = ({ init = false }) => {
 		const todoTemp = todoLists.slice();
 		todoTemp.unshift(newTodoGiven);
 		setTodoLists(todoTemp);
-
 		setNewTodo({ value: '', category: null });
+		handleAddCategory(newTodoGiven.category);
+	};
+
+	const handleAddCategory = category => {
+		if (category && categories.find(el => el.id !== category.id)) {
+			const temp = categories.slice();
+			temp.unshift(category);
+			setCategories(temp);
+		}
 	};
 
 	const handleDelete = index => {
@@ -79,6 +89,11 @@ const TodoListComponent = ({ init = false }) => {
 		setNewTodo({ ...newTodo, category });
 	};
 
+	const handleToggle = (e, checked) => {
+		setDarkMode(checked);
+		setItemToStorage(checked, 'darkMode');
+	};
+
 	return (
 		<div className={makeClassName('maining', darkMode && 'dark-mode')}>
 			<div className={'container todolist'}>
@@ -94,11 +109,9 @@ const TodoListComponent = ({ init = false }) => {
 										handleCallback={setSelect}
 									/>
 								</div>
-								<div>
-									<Toggle
-										active={darkMode}
-										handleToggle={(e, checked) => setDarkMode(checked)}
-									/>
+								<div className="dark-toggle">
+									<span>DarkMode: </span>
+									<Toggle active={darkMode} handleToggle={handleToggle} />
 								</div>
 							</div>
 							<div className="card-body">
@@ -137,7 +150,7 @@ const TodoListComponent = ({ init = false }) => {
 														data={categories}
 														attribute="name"
 														handleCallback={setCategory}
-														default-value={newTodo.category ? newTodo.category.name : ''}
+														defaultValue={newTodo.category ? newTodo.category.name : ''}
 													/>
 												</td>
 												<td className="text-end">
